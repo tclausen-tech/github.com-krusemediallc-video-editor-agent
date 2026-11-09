@@ -192,45 +192,57 @@ TEMA: ______________________   PALAVRA DO CTA: "____"
 
 ---
 
-## 9. Adaptação do projeto (personagem, paleta e proporção)
+## 9. Formato do projeto: motion clean + área segura
 
-### 9.1 Personagem
-- **Personagem feminina** desenhada em vetor (estilo flat, igual aos cenários): cabelo castanho-escuro longo, blazer azul-marinho da marca, blusa branca, brincos e broche amarelos, calça grafite. Código em `video/src/character.py`.
-- Corpo inteiro com **proporções reais**: 1,65 m de altura; cabeça ≈ 1/6 da altura; braço de 0,5 m.
-- Camadas: corpo + cabeça (boca em 4 níveis × olhos abertos/fechados × pose "braço baixo" ou "segurando o celular") e o **braço que aponta** separado, girando no ombro.
-- Animação: boca guiada pelo volume da narração (só durante as palavras); piscada de 3 quadros a cada 2,4–4,2 s; balanço leve; pulinho quando entra uma etiqueta. O braço gira até o elemento citado e a vareta sai da mão na mesma direção.
+> A partir desta versão o projeto usa um formato **motion clean**, que substitui os cenários ilustrados e os cortes secos da referência. Continuam valendo a estrutura (seção 5), as etiquetas, as legendas sincronizadas, os destaques e a vareta.
 
-### 9.2 Paleta (jamap.com.br)
+### 9.1 Layout e área segura (Instagram, Reels, TikTok, Shorts)
+| Zona | Coordenadas (1080×1920) | Motivo |
+|---|---|---|
+| Grade do perfil 4:5 | y 285–1635 | o Instagram recorta o Reels assim na grade do perfil |
+| Grade do perfil 3:4 | y 240–1680 | recorte novo da grade |
+| Evitar no topo | y < 250 | barra superior e nome do áudio |
+| Evitar embaixo | y > 1500 | usuário, legenda e botão de seguir |
+| Evitar à direita | x > 950, y 960–1700 | curtir, comentar, compartilhar |
+| **Área segura usada** | **x 60–940, y 300–1490** | tudo o que importa fica aqui |
+
+- **Etiqueta:** topo da área segura (y = 300), centralizada.
+- **Coluna de conteúdo:** x 60–640, a partir de y = 410. Recebe os cartões, os títulos e o painel de zoom do celular.
+- **Personagem:** fixa à direita, com centro em x = 800 e pés em y = 1470. Mede 900 px de altura (1,65 m) e não muda de tamanho entre as cenas. Ocupa x ≈ 640–930.
+- **Legenda:** centro em y = 1385, dentro da grade 4:5 e acima da legenda do Reels.
+
+### 9.2 Linguagem visual
+- **Fundo:** gradiente claro (`#F6F8FC` → `#E5EAF2`) com grade de pontos sutil e círculos desfocados azul-marinho e amarelo que se movem devagar.
+- **Cartões:** brancos, cantos de 40 px, sombra suave azul-marinho. O conteúdo entra deslizando da esquerda com fade (0,45 s, ease-out) e sai com fade para a esquerda (0,2 s). Não há corte seco: o fundo e a personagem continuam no lugar e só o conteúdo troca.
+- **Tipos de cena:**
+  - `title`: frase grande, e a palavra-chave ganha fundo amarelo que se estende.
+  - `ui`: cartão de interface.
+  - `phone`: a personagem segura o celular e a tela aparece num painel com lupa.
+  - `list`: itens com ícone que entram um a um e podem ser riscados, mais o carimbo "MITO!".
+  - `calc`: valores que contam até o número final.
+  - `portes`: empresas que crescem a partir do chão, na mesma escala.
+- **Legenda karaokê:** Poppins Black em branco, com contorno azul-marinho; a palavra falada no momento fica amarela.
+- **Destaque:** contorno arredondado amarelo com borda azul-marinho. O marca-texto é amarelo translúcido. A vareta termina na borda direita do item, para não cobrir o texto.
+
+### 9.3 Personagem
+- Vetorial e feminina: cabelo castanho-escuro, blazer azul-marinho, blusa branca, detalhes amarelos (`video/src/character.py`).
+- **Proporções reais (1,65 m).** O celular na mão tem o tamanho real (7,5 × 15 cm); a tela é lida no painel de zoom.
+- Animação: boca guiada pelo volume da voz, piscada, balanço leve e um pulinho quando entra uma etiqueta ou um item. O braço gira no ombro até o item citado.
+
+### 9.4 Paleta (jamap.com.br)
 | Uso | Cor |
 |---|---|
-| Etiquetas, títulos no quadro, blazer, contorno da legenda | Azul-marinho `#001D52` |
-| Destaque, marca-texto, faixa sob a etiqueta, carimbo, botão do CTA | Amarelo `#FEBF00` |
-| Fundos neutros | Cinza-claro `#DDE0DF` |
-| Texto secundário no quadro | `#333333` |
-| Custo / prejuízo / risco (exceção semântica) | Vermelho `#D0312D` |
-- Fonte das etiquetas e legendas: **Poppins** (a mesma do site). O quadro branco continua com fonte de marcador (Bangers).
-- Etiqueta padrão: caixa azul-marinho, texto branco, faixa amarela de 8 px na base. Etiqueta de CTA: caixa amarela com texto azul-marinho (igual ao botão do site).
-- Para trocar as cores, edite só `PAL` em `video/src/engine.py`.
+| Principal: etiquetas, títulos, blazer, contornos | Azul-marinho `#001D52` |
+| Destaque: palavra-chave, palavra ativa da legenda, marca-texto, carimbo, faixa das etiquetas | Amarelo `#FEBF00` |
+| Neutro | Cinza `#DDE0DF` |
+| Texto secundário | `#333333` |
+| Custo, prejuízo e erro (exceção) | Vermelho `#D0312D` |
+- Fonte: **Poppins** (Black, ExtraBold, SemiBold). Cores ficam em `PAL` em `video/src/engine.py`.
 
-### 9.3 Regra de proporção (obrigatória)
-Cada cena tem uma escala em **pixels por metro** no plano da personagem, e tudo nela segue essa escala. Nada é esticado nem aumentado fora de escala.
-
-| Cena | Escala | Referências usadas |
-|---|---|---|
-| Quarto | 760 px/m | mesa 0,75 m, iMac 0,6 m → personagem de corpo inteiro |
-| Quadro branco | 547 px/m | quadro com 1,8 m de largura → personagem de corpo inteiro ao lado |
-| Monitor | 1.677 px/m | monitor com 0,62 m de largura → personagem em close (cabeça e ombros) |
-| Celular | 1.000 px/m | celular de 7,5 × 15 cm na mão → plano médio |
-| Rua | 45 px/m (fundo) e 700 px/m (personagem em primeiro plano) | quiosque 3,6 m, loja 7 m, torre de 24 m, todos na mesma escala |
-
-- **Celular:** o aparelho fica no tamanho real, na mão dela. Para ler a tela, ela aparece num **painel de zoom (lupa)** ligado ao aparelho por uma faixa translúcida. O celular nunca é aumentado.
-- **Telas:** as telas são renderizadas na proporção exata da tela do monitor (1512×1020 → 1008×680) e do celular (600×1260), sem distorção.
-- A vareta tem 1,2 cm de espessura na escala da cena.
-- Animações de "pop" só se aplicam a ícones gráficos (?, ⚠, botão), nunca a objetos do cenário.
-
-### 9.4 Como gerar um vídeo novo
+### 9.5 Como gerar um vídeo novo
 1. Coloque a narração em `video/in/` e transcreva com tempos por palavra (ElevenLabs Scribe) → `video/words.json`.
-2. Escreva as cenas em `video/src/timeline.py` (tipos de cena: `room`, `desk`, `phone`, `board`, `street`; eventos: `label`, `hl`, `mark`, `point`, `tap`, `write`, `strike`, `stamp`, `prop`).
-3. Gere os cenários e as telas: `python3 video/src/bgs.py && python3 video/src/screens.py && node video/src/render_assets.js`.
+2. Escreva as cenas em `video/src/timeline.py`.
+3. Gere os cartões, ícones e telas do celular: `python3 video/src/cards.py && python3 video/src/screens.py && node video/src/render_assets.js`.
 4. Gere a personagem: `python3 video/src/character.py && node video/src/render_char.js`.
-5. Confira quadros: `python3 video/src/render.py --frames 10,20`. Depois gere o vídeo completo com `python3 video/src/render.py` (1080×1920, 30 fps, H.264 + AAC).
+5. Confira quadros com as guias da área segura: `python3 video/src/motion.py --frames 10,20 --guides`.
+6. Gere o vídeo: `python3 video/src/motion.py` (1080×1920, 30 fps, H.264 + AAC).
