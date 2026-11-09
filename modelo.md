@@ -31,7 +31,7 @@
    - *Locais reais* – foto de porta de casa com caixa, foto de prefeitura (logística/entrega).
 2. **Destaques de UI** – retângulo de contorno vermelho, marca-texto amarelo, cursor com anel de clique.
 3. **Boneco** – canto inferior direito (às vezes à esquerda para não tapar a UI), ocupando ~35–45% da altura.
-4. **Etiqueta verde (label)** – topo da tela.
+4. **Etiqueta verde (label)** – terço superior (y ≈ 26–30%, logo abaixo da barra do navegador/monitor).
 5. **Legenda falada** – faixa central-baixa.
 
 ### 2.2 Tipografia
@@ -39,15 +39,15 @@
 | Elemento | Fonte (equivalente) | Estilo | Cor | Posição |
 |---|---|---|---|---|
 | **Legenda (karaokê por frase)** | Montserrat Black/ExtraBold | CAIXA ALTA, ~34 px @720p, contorno preto ~3 px + leve sombra | Branco `#FFFFFF` | Centralizada, y ≈ 76% da altura (logo acima do "peito" do boneco) |
-| **Etiqueta verde** | Montserrat Bold/ExtraBold | CAIXA ALTA, ~26 px @720p | Texto branco sobre caixa verde `#1E6630` (cantos retos, padding ~10 px) | Topo, y ≈ 9–10%; centralizada ou alinhada à esquerda sobre a UI |
-| **Etiqueta do gancho** | Montserrat Bold | 3 linhas, CAIXA ALTA, mesma caixa verde | Branco / `#1E6630` | Topo, y ≈ 13–19% |
-| **Etiqueta do CTA** | Montserrat ExtraBold | ~1,4× maior que as outras, texto entre aspas: `COMENTA "EU"` | Branco / `#1E6630` | Topo |
+| **Etiqueta verde** | Montserrat Bold/ExtraBold | CAIXA ALTA, ~26 px @720p, caixa com ~60 px de altura | Texto branco sobre caixa verde `#1F6A35` (cantos retos, padding ~10 px) | Faixa y 328–388 px @1280 (≈ 26–30% da altura), centralizada; em fotos de local pode descer para y ≈ 41–46% (ex.: `PREFEITURA`) |
+| **Etiqueta do gancho** | Montserrat Bold | 3 linhas, CAIXA ALTA, mesma caixa verde | Branco / `#1F6A35` | y 252–384 px @1280 (≈ 20–30%) |
+| **Etiqueta do CTA** | Montserrat ExtraBold | ~1,4× maior que as outras, texto entre aspas: `COMENTA "EU"` | Branco / `#1F6A35` | y 316–428 px @1280 (≈ 25–33%) |
 | **Escrita no quadro branco** | Fonte marcador condensada (ex.: *Bangers*, *Luckiest Guy*, *Permanent Marker*) | CAIXA ALTA | Ver paleta abaixo | Alinhada à esquerda, de cima para baixo |
 
 ### 2.3 Paleta
 | Uso | Cor |
 |---|---|
-| Etiquetas / "dinheiro bom" / lucro | Verde `#1E6630` (caixa) e verde vivo `#2DB34A` (texto no quadro) |
+| Etiquetas / "dinheiro bom" / lucro | Verde `#1F6A35` (caixa) e verde vivo `#2DB34A` (texto no quadro) |
 | "Você paga" (custo) | Vermelho `#D02830` |
 | "Governo paga" / títulos de listas | Azul `#2058C8` |
 | Títulos neutros no quadro | Preto `#111111` |
@@ -70,7 +70,7 @@ Regra de cor: **verde = ganho/ação**, **vermelho = custo**, **azul = quem paga
 | Elemento | Entrada | Permanência | Saída |
 |---|---|---|---|
 | **Legenda** | Corte seco (aparece inteira, sem pop) | 0,4–1,0 s por bloco de 1–4 palavras, sincronizada à fala | Corte seco para o próximo bloco |
-| **Etiqueta verde** | **Fade-in** ~0,1–0,2 s (4–6 frames) | 1,5–3 s (enquanto o assunto está sendo falado) | **Fade-out** ~0,1–0,2 s; às vezes some no corte |
+| **Etiqueta verde** | **Fade-in** de 3 frames (~0,1 s: ~30% → ~60% → 100%) com leve scale-up (~0,96 → 1,0×) | 1–5 s (enquanto o assunto está sendo falado; média ~2 s) | **Fade-out** de 2–3 frames (~0,1 s); às vezes some no corte |
 | **Etiqueta do gancho** | Já presente no frame 0 | Todo o plano de abertura (~4,4 s) | Some no corte |
 | **Boneco** | Já em cena no corte (não entra/sai) | Sempre visível | — |
 | Gestos do boneco | Troca de pose a cada 1–2 s: acenar, dedo indicador para cima, apontar com vareta, segurar celular/caixa, piscar olhos | — | — |
@@ -145,7 +145,7 @@ Princípios de roteiro:
 1. [ ] Gancho em ≤ 4,5 s, com etiqueta verde de 3 linhas repetindo a promessa por escrito.
 2. [ ] Só cortes secos; troca de cenário a cada 3–11 s.
 3. [ ] Legenda em blocos de 1–4 palavras, Montserrat Black branca com contorno preto, y ≈ 76%.
-4. [ ] Etiqueta verde (`#1E6630`) com fade de ~0,15 s para cada termo-chave/passo ("1 - …", "2 - …").
+4. [ ] Etiqueta verde (`#1F6A35`, y ≈ 26–30%) com fade + leve scale-up de ~0,1 s (3 frames) para cada termo-chave/passo ("1 - …", "2 - …").
 5. [ ] Toda vez que a fala disser "aqui"/"esse"/"ó", mostrar ponteiro + contorno vermelho ou marca-texto.
 6. [ ] Gravações de tela dentro de mockup de monitor, com push-in de ~1,2× no início do plano.
 7. [ ] Quadro branco a cada ~20 s com escrita animada em fonte marcador e código de cores (vermelho custo, azul fonte, verde lucro).
@@ -186,7 +186,7 @@ TEMA: ______________________   PALAVRA DO CTA: "____"
 
 ### Notas de método
 - Cortes detectados por `ffmpeg` (`select='gt(scene,0.15)'`) e conferidos visualmente; tempos com precisão de ±1 frame. Alguns cortes entre telas parecidas (ex.: PNCP → Compras.gov ~80,5 s) foram identificados apenas visualmente.
-- Animações conferidas a 10 fps nos trechos de transição; cores medidas por amostragem de pixels (podem variar ±5% pela compressão do vídeo).
+- Animações conferidas a 10–30 fps nos trechos de transição (fade das etiquetas medido frame a frame a 30 fps); posição das etiquetas medida por varredura de pixels verdes a 5 fps no vídeo inteiro; cores medidas por amostragem de pixels (podem variar ±5% pela compressão do vídeo).
 - Fontes são **equivalentes visuais** (o vídeo não carrega metadados de fonte).
 - Transcrição obtida por speech-to-text (ElevenLabs Scribe).
 
