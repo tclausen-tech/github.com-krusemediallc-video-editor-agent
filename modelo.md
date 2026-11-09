@@ -15,7 +15,7 @@
 | Duração | ~90 s (faixa ideal: 60–90 s) |
 | Narração | Voz única, contínua, em off, ~4,2 palavras/s, quase sem pausas (só 1 pausa > 0,35 s em 90 s) |
 | Trilha | Sem música marcante; a voz carrega o vídeo |
-| Transições | **100% cortes secos** (nenhuma transição de dissolve/wipe) |
+| Transições | Dois tipos, nenhum dissolve/wipe: **(a) troca de cenário = corte + flash branco de entrada** (~4 quadros, só no cenário/boneco; legenda e etiquetas não piscam); **(b) troca de tela dentro do mesmo mockup = corte seco puro** |
 | Personagem | Boneco "palito" desenhado (corpo branco, contorno preto, cabelo castanho, olhos redondos grandes) sobreposto a fotos/gravações reais |
 
 ---
@@ -58,8 +58,8 @@
 Regra de cor: **verde = ganho/ação**, **vermelho = custo**, **azul = quem paga / estrutura**.
 
 ### 2.4 Zoom e movimento de câmera
-- **Cenas de tela (monitor):** no corte, começa em plano mais aberto (monitor inteiro + mesa) e faz **push-in** rápido (~1,0 → 1,15–1,25×, 0,6–0,9 s, ease-out) até a tela ocupar a largura; depois segue com **drift lento** (pan vertical sutil) acompanhando a área de interesse da UI (rolagem para baixo à medida que a narração avança).
-- **Celular:** entra já grande, com leve **escala + deslize** de assentamento (~0,2–0,3 s, ease-out).
+- **Cenas de tela (monitor):** no corte, começa em plano mais aberto (monitor inteiro + mesa) e faz **push-in** rápido (~1,0 → 1,15–1,25×, ease-out) até a tela ocupar a largura. Medido no plano 2: o zoom começa ~0,35 s após o corte (4,77 s) e termina em 5,17 s → **~0,4 s de movimento, ~12 quadros**, com desaceleração forte no fim. Durante o push-in o boneco desliza junto (está "preso" ao cenário); depois segue com **drift lento** (pan vertical sutil) acompanhando a área de interesse da UI (rolagem para baixo à medida que a narração avança).
+- **Celular:** entra já grande, com leve **escala + deslize** de assentamento (~2–3 quadros, ~0,1 s, ease-out), junto com o flash branco do corte (conferido em 70,00 s).
 - **Quarto, quadro branco, fotos de locais:** câmera praticamente **estática**; o movimento vem do boneco e da escrita.
 - Não há zoom "punch" agressivo nem shake: o dinamismo vem da troca constante de legenda, gestos e anotações.
 
@@ -69,18 +69,22 @@ Regra de cor: **verde = ganho/ação**, **vermelho = custo**, **azul = quem paga
 
 | Elemento | Entrada | Permanência | Saída |
 |---|---|---|---|
-| **Legenda** | Corte seco (aparece inteira, sem pop) | 0,4–1,0 s por bloco de 1–4 palavras, sincronizada à fala | Corte seco para o próximo bloco |
-| **Etiqueta verde** | **Fade-in** ~0,1–0,2 s (4–6 frames) | 1,5–3 s (enquanto o assunto está sendo falado) | **Fade-out** ~0,1–0,2 s; às vezes some no corte |
+| **Entrada de cenário** | **Flash branco**: o 1º quadro do novo cenário vem ~70% lavado de branco, o 2º ~40%, o 3º ~15%, e o 4º já está normal (ease-out, ~0,13 s). Aplica-se ao fundo **e** ao boneco | — | O cenário anterior sai em corte seco (sem fade-out) |
+| **Troca de tela interna** | Corte seco do conteúdo dentro do monitor/celular; moldura, boneco e vareta continuam (ex.: 40,80 s, 55,60 s, 81,20 s) | — | Corte seco |
+| **Legenda** | Corte seco (aparece inteira, sem pop; não sofre o flash branco) | 0,4–1,0 s por bloco de 1–4 palavras, sincronizada à fala | Corte seco para o próximo bloco |
+| **Etiqueta verde** | **Fade-in** de 2–4 quadros (~0,1 s), sem escala nem deslize | 1,5–3 s (enquanto o assunto está sendo falado) | **Fade-out** de 2–4 quadros, normalmente **terminando logo antes** do corte ou da troca de tela; às vezes some no corte |
+| **Etiqueta do CTA** | Fade-in + leve escala (entra ~1,1× e assenta), ~3 quadros; substitui a etiqueta anterior no mesmo lugar | Até o fim | Fim do vídeo |
 | **Etiqueta do gancho** | Já presente no frame 0 | Todo o plano de abertura (~4,4 s) | Some no corte |
-| **Boneco** | Já em cena no corte (não entra/sai) | Sempre visível | — |
+| **Boneco** | Quase sempre já em cena no corte. Exceção: na cena da prefeitura (74,83 s) ele **entra andando pela esquerda** carregando a caixa (~0,4 s, ~0,4 s após o corte) | Sempre visível | — |
+| Piscada | Olhos fechados por 1–2 quadros a cada ~3–5 s | — | — |
 | Gestos do boneco | Troca de pose a cada 1–2 s: acenar, dedo indicador para cima, apontar com vareta, segurar celular/caixa, piscar olhos | — | — |
-| **Vareta/ponteiro** | Braço estica uma vareta fina preta até o elemento citado no exato momento da palavra ("aqui", "ó") | Enquanto o elemento é citado | Recolhe |
+| **Vareta/ponteiro** | Braço estica uma vareta fina preta (com mãozinha/círculo na ponta) até o elemento citado no exato momento da palavra ("aqui", "ó"); a extensão leva ~5 quadros (~0,17 s), depois a ponta acompanha o cursor/texto | Enquanto o elemento é citado | Recolhe |
 | **Contorno vermelho na UI** | Desenha/aparece no momento da citação | 1–3 s | Some quando muda o foco |
 | **Marca-texto amarelo** | Aparece sobre o link/resultado quando dito "esse site aqui" | 1–2 s | Corte |
 | **Cursor + anel de clique** | Cursor move até o botão e emite um anel circular azul no clique | ~0,3 s | — |
-| **Escrita no quadro** | **Write-on** com caneta: o boneco "escreve" letra a letra com o ponteiro, sincronizado com a fala (ex.: "R$ 9 4 1, 9 8" é escrito enquanto ele diz "novecentos e quarenta e um...") | Linhas anteriores permanecem; o quadro acumula | Corte |
+| **Escrita no quadro** | **Write-on** com caneta: o boneco "escreve" letra a letra com o ponteiro, sincronizado com a fala (ex.: "R$ 9 4 1, 9 8" é escrito enquanto ele diz "novecentos e quarenta e um..."). Velocidade medida: "A PREFEITURA PAGA:" (18 caracteres) em ~21 quadros → **~25 caracteres/s**; a ponta da vareta segue a última letra | Linhas anteriores permanecem; o quadro acumula | Corte |
 | **Linha de soma** | Traço horizontal desenhado da esquerda para a direita antes do resultado | — | — |
-| **Ícones/props** | Caixa de papelão, caminhão dos correios entram deslizando pela lateral (~0,4 s) | — | Saem pela lateral oposta |
+| **Ícones/props** | Caixa de papelão entra com o boneco; **caminhão "CORREIO"** (amarelo) atravessa a base da tela da esquerda para a direita em ~1,3 s, velocidade constante, sincronizado com "mandar por correio" | — | Sai pela lateral oposta |
 | **Tela "Compra realizada!"** | Celular com tela verde e check branco aparece no corte | ~1 s | Corte |
 
 ---
@@ -88,7 +92,7 @@ Regra de cor: **verde = ganho/ação**, **vermelho = custo**, **azul = quem paga
 ## 4. Cortes e ritmo
 
 ### 4.1 Números-chave
-- **15 a 17 planos** em 90 s → **duração média ~5,5–6 s** por plano de cenário.
+- **15 planos de cenário** (14 cortes com flash) + **~6 trocas de tela internas** em corte seco, em 90 s → **duração média ~5,5–6 s** por plano de cenário.
 - Planos curtos (1,5–4,5 s) para transições narrativas (gancho, entrega, compra); planos longos (7–11 s) para demonstração de tela, **mas** dentro deles a legenda troca a cada ~0,6 s, a etiqueta a cada ~3 s e a UI rola/destaca a cada 1–2 s → **algo muda na tela a cada ≤ 1 s**.
 - Legenda: ~140 trocas em 90 s (≈ 1 troca a cada 0,65 s).
 
@@ -118,6 +122,17 @@ Regra de cor: **verde = ganho/ação**, **vermelho = custo**, **azul = quem paga
 - O **quadro branco** aparece a cada ~20–25 s para "resumir/traduzir" o que a tela mostrou (lista, valor, conta).
 - Abertura e fechamento no **mesmo cenário** (quarto) → sensação de ciclo fechado.
 
+### 4.4 Microcortes dentro dos planos (sem flash)
+| Tempo (s) | Plano | O que muda |
+|---|---|---|
+| 9,60–9,80 | 2 | Google → página de resultados (etiqueta `SEM ACENTO` sai, `DÁ ENTER` entra) |
+| 40,80 | 7 | Lista de resultados → página do edital (Aviso de Contratação) |
+| 43,1–43,4 | 7 | Rolagem/troca para a lista de itens com foto do produto |
+| 55,60 | 9 | Google Shopping → anúncio do Mercado Livre |
+| 81,20 | 14 | PNCP → Compras.gov.br |
+
+Regra: o mockup (monitor/celular), o boneco e a vareta **não** mudam; só o conteúdo da tela troca em corte seco, e a etiqueta anterior faz fade-out nos 2–3 quadros anteriores.
+
 ---
 
 ## 5. Estrutura narrativa
@@ -143,7 +158,7 @@ Princípios de roteiro:
 ## 6. Regras de reaproveitamento (checklist de edição)
 
 1. [ ] Gancho em ≤ 4,5 s, com etiqueta verde de 3 linhas repetindo a promessa por escrito.
-2. [ ] Só cortes secos; troca de cenário a cada 3–11 s.
+2. [ ] Troca de cenário a cada 3–11 s com corte + flash branco de 4 quadros (só no fundo/boneco); trocas de tela dentro do mockup em corte seco.
 3. [ ] Legenda em blocos de 1–4 palavras, Montserrat Black branca com contorno preto, y ≈ 76%.
 4. [ ] Etiqueta verde (`#1E6630`) com fade de ~0,15 s para cada termo-chave/passo ("1 - …", "2 - …").
 5. [ ] Toda vez que a fala disser "aqui"/"esse"/"ó", mostrar ponteiro + contorno vermelho ou marca-texto.
@@ -185,7 +200,7 @@ TEMA: ______________________   PALAVRA DO CTA: "____"
 ---
 
 ### Notas de método
-- Cortes detectados por `ffmpeg` (`select='gt(scene,0.15)'`) e conferidos visualmente; tempos com precisão de ±1 frame. Alguns cortes entre telas parecidas (ex.: PNCP → Compras.gov ~80,5 s) foram identificados apenas visualmente.
+- Cortes detectados por `ffmpeg` (`select='gt(scene,0.15)'`) e conferidos visualmente; tempos com precisão de ±1 frame. Alguns cortes entre telas parecidas (ex.: PNCP → Compras.gov **81,20 s**) só aparecem com limiar baixo. Verificação quadro a quadro (30 fps) feita com diferença média de luminância entre quadros: o padrão "pico + 3 quadros decrescentes" após cada corte de cenário é o flash branco; picos isolados sem cauda são trocas de tela internas.
 - Animações conferidas a 10 fps nos trechos de transição; cores medidas por amostragem de pixels (podem variar ±5% pela compressão do vídeo).
 - Fontes são **equivalentes visuais** (o vídeo não carrega metadados de fonte).
 - Transcrição obtida por speech-to-text (ElevenLabs Scribe).
