@@ -15,10 +15,15 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageChops
 sys.path.insert(0, os.path.dirname(__file__))
 from engine import *
+# Projeto: VPROJ=<nome> usa video/projects/<nome>/{narr.mp3, words.json, timeline.py}; sem VPROJ usa o vídeo original.
+PROJ = os.environ.get('VPROJ')
+if PROJ:
+    PDIR = A('projects', PROJ); sys.path.insert(0, PDIR)
+    AUDIO = os.path.join(PDIR, 'narr.mp3'); WORDS = json.load(open(os.path.join(PDIR, 'words.json')))
+else:
+    AUDIO = A('in', 'narr.mp3'); WORDS = json.load(open(A('words.json')))
 from timeline import SCENES
-
-AUDIO = A('in', 'narr.mp3'); WORDS = json.load(open(A('words.json')))
-DUR = 122.52; NF = int(DUR * FPS)
+DUR = SCENES[-1]['t1']; NF = int(DUR * FPS)
 MOUTH, LEVEL = mouth_track(AUDIO, WORDS, NF)
 BLINKS = set(); _rng = np.random.default_rng(7); _t = 1.2
 while _t < DUR:
@@ -452,10 +457,10 @@ def worker(args):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--frames'); ap.add_argument('--guides', action='store_true')
-    ap.add_argument('--workers', type=int, default=4); ap.add_argument('--out', default=A('out', 'video.mp4'))
+    ap.add_argument('--workers', type=int, default=4); ap.add_argument('--out', default=A('out', (PROJ or 'video') + '.mp4'))
     a = ap.parse_args(); os.makedirs(A('out'), exist_ok=True)
     if a.frames:
-        for t in a.frames.split(','): render_frame(int(float(t) * FPS), a.guides).save(A('out', f'f_{float(t):06.2f}.png'))
+        for t in a.frames.split(','): render_frame(int(float(t) * FPS), a.guides).save(A('out', f'{PROJ or "f"}_{float(t):06.2f}.png'))
         sys.exit()
     n = a.workers; step = math.ceil(NF / n)
     parts = [(k * step, min(NF, (k + 1) * step), A('out', f'part{k}.mp4')) for k in range(n)]

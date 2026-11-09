@@ -266,3 +266,24 @@ TEMA: ______________________   PALAVRA DO CTA: "____"
 - Ilustração semi-realista em SVG (`video/src/character.py`): luz e sombra em pele, cabelo e roupa, proporção ~7,5 cabeças, olhos com íris e cílios, lábios em dois tons, blazer azul-marinho Jamap acinturado, scarpin.
 - Mesma geometria de encaixe da versão anterior (pivô do ombro, braço que aponta, celular em escala real), então `motion.py` não muda.
 - Para uma personagem **fotorrealista**, é preciso uma imagem gerada fora daqui (corpo inteiro, fundo branco, boca fechada); ver prompt sugerido no histórico do projeto.
+
+---
+
+## 10. Personagem "Jana" e projetos por pasta
+
+### 10.1 Personagem atual (estilo mascote)
+- Gerada por `video/src/character.py`. Cabeça grande (~3 cabeças de altura), rosto arredondado e olhos grandes com dois brilhos. Franja cortina, cabelo castanho ondulado até os ombros, bochechas rosadas e cabeça inclinada 4°.
+- Roupa na identidade Jamap: blazer azul-marinho com broche amarelo, blusa branca, colar com pingente amarelo, saia evasê amarela, sapatilha azul-marinho e presilha amarela no cabelo.
+- Contorno escuro fino e borda branca de adesivo. A piscada é o olho fechado sorrindo.
+- Mantém a interface de camadas (`body_m{0-3}_b{0,1}_{down|phone}`, `arm`, `meta.json`), então `motion.py` não muda. A prévia fica em `video/projects/primeira-licitacao/personagem-jana.png`.
+
+### 10.2 Projetos
+Cada vídeo novo vive em `video/projects/<nome>/` com `roteiro.txt`, `narr.mp3`, `words.json`, `timeline.py` e `assets.py` (cartões próprios).
+1. Narração com tempos por palavra: ElevenLabs `text-to-speech/{voz}/with-timestamps` (no plano gratuito, só vozes padrão da conta; a voz atual é a Jessica, no `eleven_multilingual_v2`). Siglas vão por extenso no texto falado ("pê ene cê pê") e voltam à grafia de tela ao montar `words.json`.
+2. Cartões: `python3 video/projects/<nome>/assets.py && node video/src/render_assets.js <prefixo>`.
+3. Personagem: `python3 video/src/character.py && node video/src/render_char.js`.
+4. Quadros de teste: `VPROJ=<nome> python3 video/src/motion.py --frames 10,20`.
+5. Vídeo: `VPROJ=<nome> python3 video/src/motion.py --workers 8` → `video/out/<nome>.mp4` (copiar para `output/`).
+
+### 10.3 Projeto "primeira-licitacao" (70,6 s)
+Tutorial "Sua primeira licitação em 4 passos": PNCP → filtro Dispensa → estado e palavra-chave → plataforma do aviso (Compras.gov.br), com CTA da Jamap ("comenta EU"). O exemplo é fictício: Prefeitura de Vale Verde/SP, 500 caixas de papel A4, R$ 59.500, abaixo do limite de dispensa por valor.
