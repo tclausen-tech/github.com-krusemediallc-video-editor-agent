@@ -10,6 +10,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 from roteiro import SCENES, END, WORDS, ROOT
+import motion
 
 W, H, FPS = 1080, 1920, 30
 # Identidade jamap.com.br (variáveis globais do Elementor do site)
@@ -61,38 +62,19 @@ K = 1.3  # margem do fundo para o zoom
 
 
 class PhotoBG:
-    """Foto real em tela cheia: push-in de 1,0 -> 1,12x em 0,7 s (ease-out) + drift lento."""
+    """Foto real em tela cheia: push-in rápido de 1,0 -> 1,12x em 0,35 s (ease-out) + drift lento."""
 
     def __init__(self, sc):
         self.base = cover(photo(sc["img"]), int(W * K), int(H * K), sc.get("focus", (0.5, 0.5)))
         self.z0 = sc.get("zoom0", 1.0)
 
     def frame(self, lt):
-        z = self.z0 + 0.12 * ease_out(lt / 0.7) + 0.012 * max(lt - 0.7, 0)
+        z = self.z0 + 0.12 * ease_out(lt / 0.35) + 0.014 * max(lt - 0.35, 0)
         # a base tem K vezes o tamanho do quadro: a janela visível encolhe com o zoom
         cw, ch = self.base.width / z, self.base.height / z
         cx, cy = self.base.width / 2, self.base.height / 2
         box = (cx - cw / 2, cy - ch / 2, cx + cw / 2, cy + ch / 2)
         return self.base.transform((W, H), Image.EXTENT, box, Image.BILINEAR)
-
-
-# Quadro branco real (foto) sobre a parede do escritório desfocada
-BOARD_BOX = (40, 300, 1040, 910)       # posição do quadro no frame
-BOARD_TEXT = (92, 352, 1000, 860)      # área útil de escrita
-
-
-def board_bg():
-    wall = cover(photo("escritorio"), W, H, (0.42, 0.35)).filter(ImageFilter.GaussianBlur(16))
-    wall = ImageEnhance.Brightness(wall).enhance(1.08)
-    wall = Image.blend(wall, Image.new("RGB", (W, H), (236, 238, 242)), 0.35)
-    bd = photo("quadro")
-    bw = BOARD_BOX[2] - BOARD_BOX[0]; bh = BOARD_BOX[3] - BOARD_BOX[1]
-    bd = bd.resize((bw, bh), Image.LANCZOS)
-    sh = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(sh)
-    d.rectangle((BOARD_BOX[0] + 10, BOARD_BOX[1] + 18, BOARD_BOX[2] + 10, BOARD_BOX[3] + 22), fill=(0, 20, 50, 110))
-    sh = sh.filter(ImageFilter.GaussianBlur(18))
-    out = wall.convert("RGBA"); out.alpha_composite(sh); out.paste(bd, BOARD_BOX[:2])
-    return out.convert("RGB")
 
 
 # ---------------------------------------------------------------- personagem
@@ -223,12 +205,12 @@ def draw_label(frame, text, style, row, a, sc, y0=None):
 
 
 def label_state(t, t_in, t_out):
-    """Fade de 3 quadros com leve scale-up (0,96 -> 1,0), saída em 3 quadros."""
-    fin, fout = 3 / FPS, 3 / FPS
+    """Entrada em pop (0,6 -> 1,08 -> 1,0 em 0,2 s) e saída em fade de 3 quadros."""
+    fout = 3 / FPS
     if t < t_in or t >= t_out:
         return None
-    p = (t - t_in) / fin
-    a = clamp(p) ; sc = 0.96 + 0.04 * clamp(p)
+    p = (t - t_in) / 0.2
+    a = clamp(p * 3); sc = 0.6 + 0.4 * motion.ease_back(p, 2.4)
     if t_in == 0.0:
         a, sc = 1.0, 1.0
     q = (t_out - t) / fout
@@ -278,136 +260,6 @@ def caption_img(txt):
     ImageDraw.Draw(im).text((15 - b[0], 15 - b[1]), t, font=f, fill=WHITE, stroke_width=7, stroke_fill=(10, 14, 30))
     CCACHE[txt] = im
     return im
-
-
-# ---------------------------------------------------------------- quadro branco (write-on)
-def marker_img():
-    S = 3
-    im = Image.new("RGBA", (60 * S, 230 * S), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    d.rounded_rectangle((14 * S, 40 * S, 46 * S, 200 * S), 12 * S, fill=NAVY + (255,))
-    d.rounded_rectangle((12 * S, 150 * S, 48 * S, 228 * S), 12 * S, fill=YEL + (255,))
-    d.polygon([(18 * S, 40 * S), (42 * S, 40 * S), (34 * S, 14 * S), (26 * S, 14 * S)], fill=(30, 30, 30, 255))
-    d.rectangle((27 * S, 2 * S, 33 * S, 16 * S), fill=(20, 20, 20, 255))
-    im = im.resize((60, 230), Image.LANCZOS).rotate(-28, expand=True, resample=Image.BICUBIC)
-    return im
-
-
-MARKER = None
-
-
-class Board:
-    def __init__(self, sc):
-        self.items = sc["items"]
-        self.lines = []   # dict(text,color,size,t,dur,y,img,subs=[])
-        for it in self.items:
-            if it[0] == "write":
-                _, t, text, col, size = it
-                size = int(size * 1.3)   # escala única do texto do quadro
-                self.lines.append(dict(t=t, text=text, col=INK[col], size=size, subs=[]))
-        for it in self.items:
-            if it[0] == "sub":
-                self.lines[it[2]]["subs"].append(dict(t=it[1], text=it[3]))
-        # layout vertical
-        avail = BOARD_TEXT[3] - BOARD_TEXT[1]
-        ss = 56   # tamanho das sublinhas
-        total = sum(ln["size"] * 1.18 + len(ln["subs"]) * ss * 1.2 for ln in self.lines)
-        if total > avail:   # encolhe tudo por igual para caber no quadro
-            k = avail / total
-            for ln in self.lines:
-                ln["size"] = int(ln["size"] * k)
-            ss = int(ss * k)
-        total = 0
-        for ln in self.lines:
-            ln["h"] = ln["size"] * 1.18 + len(ln["subs"]) * ss * 1.2
-            total += ln["h"]
-        y = BOARD_TEXT[1] + max(0, (BOARD_TEXT[3] - BOARD_TEXT[1] - total) / 2 - 10)
-        for ln in self.lines:
-            ln["img"], ln["bb"] = self.text_img(ln["text"], ln["size"], ln["col"])
-            ln["y"] = y; ln["x"] = BOARD_TEXT[0]
-            ln["dur"] = clamp(0.045 * len(ln["text"]), 0.35, 1.1)
-            sy = y + ln["size"] * 1.18
-            for s in ln["subs"]:
-                s["img"], s["bb"] = self.text_img(s["text"], ss, GRAY)
-                s["y"] = sy; s["x"] = BOARD_TEXT[0] + 40; s["dur"] = clamp(0.04 * len(s["text"]), 0.35, 0.9)
-                sy += ss * 1.2
-            y += ln["h"]
-        self.strikes = [(it[1], it[2]) for it in self.items if it[0] == "strike"]
-        self.hls = [(it[1], it[2]) for it in self.items if it[0] == "hl"]
-        self.stamps = [(it[1], it[2]) for it in self.items if it[0] == "stamp"]
-
-    @staticmethod
-    def text_img(text, size, col):
-        f = font("PermanentMarker-Regular", size)
-        while f.getbbox(text)[2] > BOARD_TEXT[2] - BOARD_TEXT[0] and size > 30:
-            size -= 4; f = font("PermanentMarker-Regular", size)
-        b = f.getbbox(text)
-        im = Image.new("RGBA", (b[2] + 10, int(size * 1.4)), (0, 0, 0, 0))
-        ImageDraw.Draw(im).text((0, int(size * 0.1)), text, font=f, fill=col + (255,))
-        bb = im.getbbox()
-        return im, bb
-
-    def writers(self):
-        for ln in self.lines:
-            yield ln
-            yield from ln["subs"]
-
-    def draw(self, frame, t):
-        global MARKER
-        lay = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
-        # marca-texto amarelo (atrás do texto)
-        for th, idx in self.hls:
-            if t < th:
-                continue
-            ln = self.lines[idx]; bb = ln["bb"]
-            p = ease_out((t - th) / 0.35)
-            x0 = ln["x"] + bb[0] - 10; x1 = x0 + (bb[2] - bb[0] + 20) * p
-            yc = ln["y"] + (bb[1] + bb[3]) / 2 + ln["size"] * 0.08
-            d.rectangle((x0, yc - ln["size"] * 0.34, x1, yc + ln["size"] * 0.34), fill=YEL + (150,))
-        tip = None
-        for ln in self.writers():
-            if t < ln["t"]:
-                continue
-            p = clamp((t - ln["t"]) / ln["dur"])
-            im = ln["img"]; bb = ln["bb"]
-            xr = bb[0] + (bb[2] - bb[0]) * p
-            if p < 1:
-                im = im.crop((0, 0, max(1, int(xr)), im.height))
-                tip = (ln["x"] + xr, ln["y"] + (bb[1] + bb[3]) / 2)
-            lay.alpha_composite(im, (int(ln["x"]), int(ln["y"])))
-        for th, idx in self.strikes:
-            if t < th:
-                continue
-            ln = self.lines[idx]; bb = ln["bb"]
-            p = ease_out((t - th) / 0.3)
-            y = ln["y"] + (bb[1] + bb[3]) / 2 + 4
-            x0 = ln["x"] + bb[0] - 12; x1 = x0 + (bb[2] - bb[0] + 24) * p
-            d.line((x0, y + 6, x1, y - 6 * p), fill=RED + (255,), width=12)
-            if p < 1:
-                tip = (x1, y)
-        for th, txt in self.stamps:
-            if t < th:
-                continue
-            p = ease_out((t - th) / 0.18)
-            lay.alpha_composite(self.stamp(txt, 1.8 - 0.8 * p, p), (0, 0))
-        frame.alpha_composite(lay)
-        if tip:
-            MARKER = MARKER or marker_img()
-            frame.alpha_composite(MARKER, (int(tip[0] - 8), int(tip[1] - MARKER.height + 30)))
-
-    SCACHE = {}
-
-    def stamp(self, txt, sc, a):
-        f = font("Poppins-Black", 120)
-        b = f.getbbox(txt)
-        im = Image.new("RGBA", (b[2] + 80, b[3] + 60), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-        d.rounded_rectangle((6, 6, im.width - 6, im.height - 6), 18, outline=RED + (255,), width=12)
-        d.text((40 - b[0], 30 - b[1]), txt, font=f, fill=RED + (255,))
-        im = im.rotate(12, expand=True, resample=Image.BICUBIC)
-        im = im.resize((int(im.width * sc), int(im.height * sc)), Image.BILINEAR)
-        im.putalpha(im.getchannel("A").point(lambda v: int(v * a)))
-        out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        out.alpha_composite(im, (int(600 - im.width / 2), int(700 - im.height / 2)))
-        return out
 
 
 # ---------------------------------------------------------------- CTA (cartão + URL digitando)
@@ -487,16 +339,13 @@ class Renderer:
         self.char = Character(audio_rms(self.audio))
         self.caps = caption_chunks()
         self.bgs = {}
-        self.board_bg = None
         self.ends = [SCENES[i + 1]["t0"] if i + 1 < len(SCENES) else END for i in range(len(SCENES))]
         self.hops = sorted(l[0] for sc in SCENES for l in sc.get("labels", []) if l[0] > 0)
 
     def bg(self, i, lt):
         sc = SCENES[i]
-        if sc["kind"] == "board":
-            if self.board_bg is None:
-                self.board_bg = board_bg()
-            return self.board_bg.copy()
+        if sc["kind"] == "motion":
+            return motion.background(sc.get("bg", "navy"), lt)
         if i not in self.bgs:
             self.bgs = {i: PhotoBG(sc)}   # só a cena atual em memória
         return self.bgs[i].frame(lt)
@@ -504,10 +353,10 @@ class Renderer:
     def frame(self, t, show_guides=False):
         i = scene_at(t); sc = SCENES[i]; end = self.ends[i]; lt = t - sc["t0"]
         fr = self.bg(i, lt).convert("RGBA")
-        if sc["kind"] == "board":
-            if sc.get("_b") is None:
-                sc["_b"] = Board(sc)
-            sc["_b"].draw(fr, t)
+        if sc["kind"] == "motion":
+            if sc.get("_m") is None:
+                sc["_m"] = motion.Motion(sc, font)
+            sc["_m"].draw(fr, t)
         if sc["kind"] == "cta":
             fr.alpha_composite(cta_card(t, sc))
         # personagem (pulinho quando entra uma etiqueta)
@@ -525,6 +374,8 @@ class Renderer:
                 im = caption_img(txt)
                 fr.alpha_composite(im, (round(W / 2 - im.width / 2), round(CAP_Y - im.height / 2)))
                 break
+        if lt < 0.1 and i > 0:   # flash branco no corte
+            fr.alpha_composite(Image.new("RGBA", (W, H), (255, 255, 255, int(110 * (1 - lt / 0.1)))))
         if show_guides:
             guides(fr)
         return fr.convert("RGB")

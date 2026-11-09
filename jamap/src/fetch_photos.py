@@ -6,7 +6,7 @@ PICK = {  # nome -> (pasta de busca, índice)
     "escritorio": ("office", 3), "loja": ("c_shop", 0), "lojista": ("c_shop", 3),
     "papelada": ("c_paper", 10), "assinatura": ("c_paper", 11), "calculadora": ("calc2", 11),
     "martelo": ("gavel", 0), "notebook": ("meeting2", 0), "datacenter": ("dc2", 1),
-    "esplanada": ("brasilia", 6), "ministerio": ("brasilia", 3), "quadro": ("whiteboard", 0),
+    "esplanada": ("brasilia", 6), "ministerio": ("brasilia", 3)
 }
 cand = sys.argv[1]; here = os.path.dirname(os.path.abspath(__file__))
 out = os.path.join(here, "..", "assets", "photos"); credits = []

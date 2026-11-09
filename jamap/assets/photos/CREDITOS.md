@@ -11,4 +11,3 @@
 - datacenter.jpg: "Racks Amravati Data Center.jpg" — PiDatacenters — CC BY-SA 4.0 — https://commons.wikimedia.org/wiki/File%3ARacks_Amravati_Data_Center.jpg
 - esplanada.jpg: "Esplanada dos Ministérios em 2018.jpg" — Edilson Rodrigues/Agência Senado — CC BY 2.0 — https://commons.wikimedia.org/wiki/File%3AEsplanada_dos_Minist%C3%A9rios_em_2018.jpg
 - ministerio.jpg: "Esplanada dos Ministérios (52232232753).jpg" — Agência Senado from Brasilia, Brazil — CC BY 2.0 — https://commons.wikimedia.org/wiki/File%3AEsplanada_dos_Minist%C3%A9rios_%2852232232753%29.jpg
-- quadro.jpg: "Whiteboard with markers.jpg" — Sprinno — CC0 — https://commons.wikimedia.org/wiki/File%3AWhiteboard_with_markers.jpg
