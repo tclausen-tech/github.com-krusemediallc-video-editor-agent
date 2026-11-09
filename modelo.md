@@ -192,21 +192,45 @@ TEMA: ______________________   PALAVRA DO CTA: "____"
 
 ---
 
-## 9. Adaptação do projeto (personagem e paleta próprios)
+## 9. Adaptação do projeto (personagem, paleta e proporção)
 
 ### 9.1 Personagem
-- **Substitui o boneco palito** da referência: busto 3D estilo cartoon (cabelo e barba pretos, óculos redondos pretos, camisa preta) — arquivo `video/in/char.webp`.
-- Recortado do fundo branco (`rembg`) e com **contorno branco tipo adesivo** (~14 px) para destacar sobre qualquer cenário.
-- Animação "recorte de papel": **boca em 4 níveis** (fechada + 3 aberturas) dirigida pela amplitude da narração e só durante as palavras; **piscada** de 3 quadros a cada 2,4–4,2 s; balanço leve (±6 px, 0,45 Hz); "pulo" de 3,5% quando entra uma etiqueta.
-- Posição: canto inferior direito (cenas de tela/quadro/celular) ou centro (quarto), cortado na base do quadro, ~660 px de altura em 1080×1920.
-- Gestos de mão da referência viram a **vareta** que sai do ombro até o elemento citado.
+- **Personagem feminina** desenhada em vetor (estilo flat, igual aos cenários): cabelo castanho-escuro longo, blazer azul-marinho da marca, blusa branca, brincos e broche amarelos, calça grafite. Código em `video/src/character.py`.
+- Corpo inteiro com **proporções reais**: 1,65 m de altura; cabeça ≈ 1/6 da altura; braço de 0,5 m.
+- Camadas: corpo + cabeça (boca em 4 níveis × olhos abertos/fechados × pose "braço baixo" ou "segurando o celular") e o **braço que aponta** separado, girando no ombro.
+- Animação: boca guiada pelo volume da narração (só durante as palavras); piscada de 3 quadros a cada 2,4–4,2 s; balanço leve; pulinho quando entra uma etiqueta. O braço gira até o elemento citado e a vareta sai da mão na mesma direção.
 
-### 9.2 Paleta
-- Enquanto a paleta oficial não chega, usa-se a paleta da referência (seção 2.3).
-- Para trocar, editar só o dicionário `PAL` em `video/src/engine.py` e renderizar de novo.
+### 9.2 Paleta (jamap.com.br)
+| Uso | Cor |
+|---|---|
+| Etiquetas, títulos no quadro, blazer, contorno da legenda | Azul-marinho `#001D52` |
+| Destaque, marca-texto, faixa sob a etiqueta, carimbo, botão do CTA | Amarelo `#FEBF00` |
+| Fundos neutros | Cinza-claro `#DDE0DF` |
+| Texto secundário no quadro | `#333333` |
+| Custo / prejuízo / risco (exceção semântica) | Vermelho `#D0312D` |
+- Fonte das etiquetas e legendas: **Poppins** (a mesma do site). O quadro branco continua com fonte de marcador (Bangers).
+- Etiqueta padrão: caixa azul-marinho, texto branco, faixa amarela de 8 px na base. Etiqueta de CTA: caixa amarela com texto azul-marinho (igual ao botão do site).
+- Para trocar as cores, edite só `PAL` em `video/src/engine.py`.
 
-### 9.3 Como gerar um vídeo novo
+### 9.3 Regra de proporção (obrigatória)
+Cada cena tem uma escala em **pixels por metro** no plano da personagem, e tudo nela segue essa escala. Nada é esticado nem aumentado fora de escala.
+
+| Cena | Escala | Referências usadas |
+|---|---|---|
+| Quarto | 760 px/m | mesa 0,75 m, iMac 0,6 m → personagem de corpo inteiro |
+| Quadro branco | 547 px/m | quadro com 1,8 m de largura → personagem de corpo inteiro ao lado |
+| Monitor | 1.677 px/m | monitor com 0,62 m de largura → personagem em close (cabeça e ombros) |
+| Celular | 1.000 px/m | celular de 7,5 × 15 cm na mão → plano médio |
+| Rua | 45 px/m (fundo) e 700 px/m (personagem em primeiro plano) | quiosque 3,6 m, loja 7 m, torre de 24 m, todos na mesma escala |
+
+- **Celular:** o aparelho fica no tamanho real, na mão dela. Para ler a tela, ela aparece num **painel de zoom (lupa)** ligado ao aparelho por uma faixa translúcida. O celular nunca é aumentado.
+- **Telas:** as telas são renderizadas na proporção exata da tela do monitor (1512×1020 → 1008×680) e do celular (600×1260), sem distorção.
+- A vareta tem 1,2 cm de espessura na escala da cena.
+- Animações de "pop" só se aplicam a ícones gráficos (?, ⚠, botão), nunca a objetos do cenário.
+
+### 9.4 Como gerar um vídeo novo
 1. Coloque a narração em `video/in/` e transcreva com tempos por palavra (ElevenLabs Scribe) → `video/words.json`.
-2. Escreva as cenas em `video/src/timeline.py` (tipos de cena: `room`, `desk`, `phone`, `board`, `building`; eventos: `label`, `hl`, `mark`, `point`, `tap`, `write`, `strike`, `stamp`, `prop`).
-3. Telas e cenários são HTML/SVG em `video/src/screens.py` e `video/src/bgs.py` → `node video/src/render_assets.js` gera os PNGs e as posições dos elementos destacáveis.
-4. `python3 video/src/render.py --frames 10,20` para conferir quadros; `python3 video/src/render.py` para o vídeo completo (1080×1920, 30 fps, H.264 + AAC).
+2. Escreva as cenas em `video/src/timeline.py` (tipos de cena: `room`, `desk`, `phone`, `board`, `street`; eventos: `label`, `hl`, `mark`, `point`, `tap`, `write`, `strike`, `stamp`, `prop`).
+3. Gere os cenários e as telas: `python3 video/src/bgs.py && python3 video/src/screens.py && node video/src/render_assets.js`.
+4. Gere a personagem: `python3 video/src/character.py && node video/src/render_char.js`.
+5. Confira quadros: `python3 video/src/render.py --frames 10,20`. Depois gere o vídeo completo com `python3 video/src/render.py` (1080×1920, 30 fps, H.264 + AAC).

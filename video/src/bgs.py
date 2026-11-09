@@ -17,9 +17,9 @@ def room():
     # corkboard
     s+='<rect x="70" y="330" width="420" height="300" rx="8" fill="#C8955F" stroke="#8C6239" stroke-width="10" filter="url(#sh)"/>'
     for x,y,c,r in [(100,360,'#FFF59D',-4),(210,380,'#FFFFFF',3),(320,350,'#B3E5FC',-2),(120,490,'#F8BBD0',5),(260,500,'#FFFFFF',-3),(380,470,'#C8E6C9',4)]:
-        s+=f'<rect x="{x}" y="{y}" width="85" height="95" fill="{c}" transform="rotate({r} {x+40} {y+45})"/><circle cx="{x+42}" cy="{y+8}" r="6" fill="#E53935"/>'
+        s+=f'<rect x="{x}" y="{y}" width="85" height="95" fill="{c}" transform="rotate({r} {x+40} {y+45})"/><circle cx="{x+42}" cy="{y+8}" r="6" fill="#001D52"/>'
     # shelf + plants
-    s+='<rect x="60" y="250" width="440" height="16" rx="4" fill="#A7774C"/>'+plant(130,200,1.1)+plant(420,205,0.9)+'<rect x="230" y="178" width="26" height="72" fill="#4A6FA5"/><rect x="258" y="190" width="22" height="60" fill="#E07A5F"/><rect x="282" y="184" width="24" height="66" fill="#81B29A"/>'
+    s+='<rect x="60" y="250" width="440" height="16" rx="4" fill="#A7774C"/>'+plant(130,200,1.1)+plant(420,205,0.9)+'<rect x="230" y="178" width="26" height="72" fill="#001D52"/><rect x="258" y="190" width="22" height="60" fill="#FEBF00"/><rect x="282" y="184" width="24" height="66" fill="#8C9BB5"/>'
     # desk
     s+='<rect x="0" y="1060" width="1080" height="34" fill="url(#wood)" filter="url(#sh)"/>'
     s+='<rect x="40" y="1094" width="250" height="560" fill="#FFFFFF" stroke="#E2DED8" stroke-width="3"/>'+''.join(f'<rect x="52" y="{1110+i*135}" width="226" height="118" rx="6" fill="#FAFAFA" stroke="#E2DED8" stroke-width="3"/><rect x="135" y="{1160+i*135}" width="60" height="10" rx="5" fill="#222"/>' for i in range(4))
@@ -59,7 +59,7 @@ def desk():
 def sala():
     s='<rect width="1080" height="1920" fill="#F3EEE8"/>'
     for x in [80,420,760]: s+=f'<rect x="{x}" y="120" width="260" height="900" rx="6" fill="none" stroke="#E2D9CE" stroke-width="10"/>'
-    s+='<rect x="0" y="1180" width="1080" height="740" fill="#E8DFD3"/><path d="M-40 1300 q0 -160 160 -160 h840 q160 0 160 160 v320 h-1160z" fill="#F7F3EE" filter="url(#sh)"/><rect x="60" y="1220" width="320" height="260" rx="40" fill="#EFE8DE"/><rect x="420" y="1220" width="320" height="260" rx="40" fill="#EFE8DE"/>'
+    s+='<rect x="0" y="1180" width="1080" height="740" fill="#E8DFD3"/><path d="M-40 1300 q0 -160 160 -160 h840 q160 0 160 160 v320 h-1160z" fill="#F7F3EE" filter="url(#sh)"/><rect x="60" y="1220" width="320" height="260" rx="40" fill="#C9D3E8"/><rect x="420" y="1220" width="320" height="260" rx="40" fill="#FFE38A"/>'
     s+='<ellipse cx="900" cy="1060" rx="80" ry="110" fill="#E9DFD2"/>'+plant(940,1080,1.3)
     return SVG(1080,1920,s)
 
@@ -79,6 +79,27 @@ def building():
     s+='<line x1="540" y1="470" x2="540" y2="330" stroke="#555" stroke-width="8"/><rect x="540" y="330" width="120" height="76" fill="#009C3B"/><path d="M600 338 L652 368 L600 398 L548 368z" fill="#FFDF00"/><circle cx="600" cy="368" r="17" fill="#002776"/>'
     return SVG(1080,1920,s)
 
-for name,fn in [('bg_room',room),('bg_board',board),('bg_desk',desk),('bg_sala',sala),('bg_building',building)]:
+def street():
+    s='<rect width="1080" height="1920" fill="url(#sky)"/>'
+    for cx,cy,sc in [(150,230,1.1),(780,160,.9),(520,420,.7)]:
+        s+=''.join(f'<circle cx="{cx+dx*sc}" cy="{cy+dy*sc}" r="{r*sc}" fill="#fff" opacity=".95"/>' for dx,dy,r in [(0,0,55),(60,-20,65),(125,5,50),(60,25,55)])
+    s+='<rect x="0" y="1250" width="1080" height="670" fill="#A3ABB2"/><rect x="0" y="1250" width="1080" height="80" fill="#D3D7DB"/>'
+    for x in range(0,1080,160): s+=f'<rect x="{x+40}" y="1640" width="90" height="16" fill="#fff" opacity=".8"/>'
+    # escala: 45 px = 1 m; chão em y=1250
+    # quiosque 3,6 m x 3,2 m
+    s+='<rect x="40" y="1106" width="162" height="144" fill="#FFF8E6" stroke="#8A6A3A" stroke-width="5"/>'
+    s+=''.join(f'<rect x="{34+i*29}" y="1086" width="29" height="34" fill="{"#001D52" if i%2==0 else "#FFFFFF"}"/>' for i in range(6))
+    s+='<rect x="62" y="1150" width="70" height="56" fill="#BFDDF5" stroke="#8A6A3A" stroke-width="4"/><rect x="146" y="1160" width="40" height="90" fill="#8A6A3A"/>'
+    # loja média 7 m x 6 m
+    s+='<rect x="240" y="980" width="315" height="270" fill="#F2E7D5" stroke="#7A5A3A" stroke-width="6"/><rect x="240" y="980" width="315" height="46" fill="#FEBF00"/>'
+    s+='<rect x="262" y="1060" width="150" height="110" fill="#BFDDF5" stroke="#7A5A3A" stroke-width="5"/><rect x="440" y="1090" width="90" height="160" fill="#7A5A3A"/>'
+    # torre 8 m x 24 m
+    s+='<rect x="600" y="170" width="360" height="1080" fill="#3D5A85" stroke="#22385A" stroke-width="8"/>'
+    for r in range(22):
+        for c in range(5): s+=f'<rect x="{622+c*68}" y="{196+r*44}" width="50" height="28" fill="#BFDDF5" opacity=".9"/>'
+    s+='<rect x="740" y="1150" width="80" height="100" fill="#22385A"/>'
+    return SVG(1080,1920,s)
+
+for name,fn in [('bg_street',street),('bg_room',room),('bg_board',board),('bg_desk',desk),('bg_sala',sala),('bg_building',building)]:
     open(os.path.join(OUT,name+'.html'),'w').write(page(1080,1920,fn()))
 print('ok')
