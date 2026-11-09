@@ -189,3 +189,24 @@ TEMA: ______________________   PALAVRA DO CTA: "____"
 - Animações conferidas a 10 fps nos trechos de transição; cores medidas por amostragem de pixels (podem variar ±5% pela compressão do vídeo).
 - Fontes são **equivalentes visuais** (o vídeo não carrega metadados de fonte).
 - Transcrição obtida por speech-to-text (ElevenLabs Scribe).
+
+---
+
+## 9. Adaptação do projeto (personagem e paleta próprios)
+
+### 9.1 Personagem
+- **Substitui o boneco palito** da referência: busto 3D estilo cartoon (cabelo e barba pretos, óculos redondos pretos, camisa preta) — arquivo `video/in/char.webp`.
+- Recortado do fundo branco (`rembg`) e com **contorno branco tipo adesivo** (~14 px) para destacar sobre qualquer cenário.
+- Animação "recorte de papel": **boca em 4 níveis** (fechada + 3 aberturas) dirigida pela amplitude da narração e só durante as palavras; **piscada** de 3 quadros a cada 2,4–4,2 s; balanço leve (±6 px, 0,45 Hz); "pulo" de 3,5% quando entra uma etiqueta.
+- Posição: canto inferior direito (cenas de tela/quadro/celular) ou centro (quarto), cortado na base do quadro, ~660 px de altura em 1080×1920.
+- Gestos de mão da referência viram a **vareta** que sai do ombro até o elemento citado.
+
+### 9.2 Paleta
+- Enquanto a paleta oficial não chega, usa-se a paleta da referência (seção 2.3).
+- Para trocar, editar só o dicionário `PAL` em `video/src/engine.py` e renderizar de novo.
+
+### 9.3 Como gerar um vídeo novo
+1. Coloque a narração em `video/in/` e transcreva com tempos por palavra (ElevenLabs Scribe) → `video/words.json`.
+2. Escreva as cenas em `video/src/timeline.py` (tipos de cena: `room`, `desk`, `phone`, `board`, `building`; eventos: `label`, `hl`, `mark`, `point`, `tap`, `write`, `strike`, `stamp`, `prop`).
+3. Telas e cenários são HTML/SVG em `video/src/screens.py` e `video/src/bgs.py` → `node video/src/render_assets.js` gera os PNGs e as posições dos elementos destacáveis.
+4. `python3 video/src/render.py --frames 10,20` para conferir quadros; `python3 video/src/render.py` para o vídeo completo (1080×1920, 30 fps, H.264 + AAC).
