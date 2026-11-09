@@ -246,3 +246,8 @@ TEMA: ______________________   PALAVRA DO CTA: "____"
 4. Gere a personagem: `python3 video/src/character.py && node video/src/render_char.js`.
 5. Confira quadros com as guias da área segura: `python3 video/src/motion.py --frames 10,20 --guides`.
 6. Gere o vídeo: `python3 video/src/motion.py` (1080×1920, 30 fps, H.264 + AAC).
+
+### Personagem (versão atual)
+- Ilustração semi-realista em SVG (`video/src/character.py`): luz e sombra em pele, cabelo e roupa, proporção ~7,5 cabeças, olhos com íris e cílios, lábios em dois tons, blazer azul-marinho Jamap acinturado, scarpin.
+- Mesma geometria de encaixe da versão anterior (pivô do ombro, braço que aponta, celular em escala real), então `motion.py` não muda.
+- Para uma personagem **fotorrealista**, é preciso uma imagem gerada fora daqui (corpo inteiro, fundo branco, boca fechada); ver prompt sugerido no histórico do projeto.
